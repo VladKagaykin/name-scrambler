@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "name-scrambler",
+  "version": "2.0.0",
+  "name": "Name Scrambler + Proximity Chat",
+  "description": "Hides player names with §k formatting + proximity chat system",
+  "authors": ["AVCD"],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/namescrambler/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["com.example.namescrambler.NameScramblerMod"]
+  },
+  "mixins": [
+    "name-scrambler.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.21",
+    "minecraft": "1.19.4",
+    "java": ">=17",
+    "fabric-api": "*"
+  }
+}
