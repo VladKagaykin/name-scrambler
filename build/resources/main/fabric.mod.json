@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "id": "name-scrambler",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "name": "Name Scrambler + Proximity Chat",
-  "description": "Hides player names with §k formatting + proximity chat system",
+  "description": "Hides player names with §k formatting + proximity chat system + team name hiding",
   "authors": ["AVCD"],
   "contact": {},
   "license": "MIT",
