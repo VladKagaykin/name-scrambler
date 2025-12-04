@@ -1,2 +1,3 @@
 v1	named	intermediary
 FIELD	com/example/namescrambler/mixin/ServerPlayNetworkHandlerMixin	Lnet/minecraft/server/network/ServerPlayerEntity;	player	field_14140
+FIELD	com/example/namescrambler/mixin/ServerPlayNetworkHandlerMixin_Commands	Lnet/minecraft/server/network/ServerPlayerEntity;	player	field_14140
