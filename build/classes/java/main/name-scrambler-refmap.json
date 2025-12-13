@@ -1,5 +1,8 @@
 {
   "mappings": {
+    "com/example/namescrambler/mixin/ArrowEntityMixin": {
+      "onHit": "Lnet/minecraft/class_1667;method_7450(Lnet/minecraft/class_1309;)V"
+    },
     "com/example/namescrambler/mixin/EntityMixin": {
       "getDisplayName": "Lnet/minecraft/class_1297;method_5476()Lnet/minecraft/class_2561;",
       "getName": "Lnet/minecraft/class_1297;method_5477()Lnet/minecraft/class_2561;"
@@ -13,10 +16,16 @@
     },
     "com/example/namescrambler/mixin/ServerPlayerEntityMixin": {
       "onDisconnect": "Lnet/minecraft/class_3222;method_14231()V"
+    },
+    "com/example/namescrambler/mixin/ServerPlayerEntityMixin_Abilities": {
+      "tick": "Lnet/minecraft/class_3222;method_5773()V"
     }
   },
   "data": {
     "named:intermediary": {
+      "com/example/namescrambler/mixin/ArrowEntityMixin": {
+        "onHit": "Lnet/minecraft/class_1667;method_7450(Lnet/minecraft/class_1309;)V"
+      },
       "com/example/namescrambler/mixin/EntityMixin": {
         "getDisplayName": "Lnet/minecraft/class_1297;method_5476()Lnet/minecraft/class_2561;",
         "getName": "Lnet/minecraft/class_1297;method_5477()Lnet/minecraft/class_2561;"
@@ -30,6 +39,9 @@
       },
       "com/example/namescrambler/mixin/ServerPlayerEntityMixin": {
         "onDisconnect": "Lnet/minecraft/class_3222;method_14231()V"
+      },
+      "com/example/namescrambler/mixin/ServerPlayerEntityMixin_Abilities": {
+        "tick": "Lnet/minecraft/class_3222;method_5773()V"
       }
     }
   }

@@ -7,7 +7,9 @@
     "PlayerEntityMixin",
     "EntityMixin",
     "ServerPlayerEntityMixin",
-    "ServerPlayNetworkHandlerMixin"
+    "ServerPlayNetworkHandlerMixin",
+    "ArrowEntityMixin",
+    "ServerPlayerEntityMixin_Abilities"
   ],
   "injectors": {
     "defaultRequire": 1
