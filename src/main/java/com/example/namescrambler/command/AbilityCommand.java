@@ -23,6 +23,7 @@ public class AbilityCommand {
     
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal("ability")
+            .requires(source -> source.hasPermissionLevel(2)) // Только операторы
             .then(CommandManager.literal("info")
                 .executes(context -> {
                     ServerPlayerEntity player = context.getSource().getPlayer();
@@ -57,7 +58,6 @@ public class AbilityCommand {
             )
             
             .then(CommandManager.literal("setchance")
-                .requires(source -> source.hasPermissionLevel(2))
                 .then(CommandManager.argument("chance", DoubleArgumentType.doubleArg(0.0, 1.0))
                     .executes(context -> {
                         double newChance = DoubleArgumentType.getDouble(context, "chance");
@@ -72,7 +72,6 @@ public class AbilityCommand {
             )
             
             .then(CommandManager.literal("getchance")
-                .requires(source -> source.hasPermissionLevel(2))
                 .executes(context -> {
                     double currentChance = AbilitySystem.getArrowChance();
                     context.getSource().sendMessage(Text.literal(
@@ -83,7 +82,6 @@ public class AbilityCommand {
             )
             
             .then(CommandManager.literal("give")
-                .requires(source -> source.hasPermissionLevel(2))
                 .then(CommandManager.argument("player", EntityArgumentType.player())
                     .then(CommandManager.argument("ability", StringArgumentType.word())
                         .suggests((context, builder) -> {
@@ -101,6 +99,7 @@ public class AbilityCommand {
                                 context.getSource().sendMessage(Text.literal(
                                     "§aСпособность удалена у игрока " + target.getGameProfile().getName()
                                 ));
+                                target.sendMessage(Text.literal("§cВаша способность была удалена администратором"), false);
                             } else if (VALID_ABILITIES.contains(ability)) {
                                 if (!AbilitySystem.isAbilityTaken(ability) || 
                                     ability.equals(AbilitySystem.getPlayerAbility(target.getUuid()))) {
@@ -109,6 +108,7 @@ public class AbilityCommand {
                                         "§aИгроку " + target.getGameProfile().getName() + 
                                         " выдана способность: §e" + ability + " §7(сохранено навсегда)"
                                     ));
+                                    target.sendMessage(Text.literal("§aВам выдана способность: §e" + ability), false);
                                 } else {
                                     context.getSource().sendMessage(Text.literal(
                                         "§cЭта способность уже занята другим игроком!"
@@ -126,7 +126,6 @@ public class AbilityCommand {
             )
             
             .then(CommandManager.literal("remove")
-                .requires(source -> source.hasPermissionLevel(2))
                 .then(CommandManager.argument("player", EntityArgumentType.player())
                     .executes(context -> {
                         ServerPlayerEntity target = EntityArgumentType.getPlayer(context, "player");
@@ -135,6 +134,7 @@ public class AbilityCommand {
                         context.getSource().sendMessage(Text.literal(
                             "§aСпособность удалена у игрока " + target.getGameProfile().getName()
                         ));
+                        target.sendMessage(Text.literal("§cВаша способность была удалена администратором"), false);
                         
                         return Command.SINGLE_SUCCESS;
                     })
@@ -142,7 +142,6 @@ public class AbilityCommand {
             )
             
             .then(CommandManager.literal("check")
-                .requires(source -> source.hasPermissionLevel(2))
                 .then(CommandManager.argument("player", EntityArgumentType.player())
                     .executes(context -> {
                         ServerPlayerEntity target = EntityArgumentType.getPlayer(context, "player");
@@ -165,38 +164,36 @@ public class AbilityCommand {
             )
             
             .then(CommandManager.literal("list")
-            .requires(source -> source.hasPermissionLevel(2))
-            .executes(context -> {
-                StringBuilder sb = new StringBuilder();
-                sb.append("§6=== Доступные способности ===\n");
-                sb.append("§esuperfly §7- Ограничение по чанку точки возрождения\n");
-                sb.append("§d20centuryboy §7- Shift+взгляд вниз = фиксация позиции\n");
-                sb.append("§fwhitealbum §7- Замораживание воды и эффект заморозки\n");
-                sb.append("\n§6=== Занятые способности ===\n");
-                
-                MinecraftServer server = context.getSource().getServer();
-                boolean hasAbilities = false;
-                
-                for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-                    String ability = AbilitySystem.getPlayerAbility(player.getUuid());
-                    if (ability != null) {
-                        sb.append("§e").append(player.getGameProfile().getName())
-                        .append("§7: §a").append(ability).append("\n");
-                        hasAbilities = true;
+                .executes(context -> {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("§6=== Доступные способности ===\n");
+                    sb.append("§esuperfly §7- Ограничение по чанку точки возрождения\n");
+                    sb.append("§d20centuryboy §7- Shift+взгляд вниз = фиксация позиции\n");
+                    sb.append("§fwhitealbum §7- Замораживание воды и эффект заморозки\n");
+                    sb.append("\n§6=== Занятые способности ===\n");
+                    
+                    MinecraftServer server = context.getSource().getServer();
+                    boolean hasAbilities = false;
+                    
+                    for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+                        String ability = AbilitySystem.getPlayerAbility(player.getUuid());
+                        if (ability != null) {
+                            sb.append("§e").append(player.getGameProfile().getName())
+                            .append("§7: §a").append(ability).append("\n");
+                            hasAbilities = true;
+                        }
                     }
-                }
-                
-                if (!hasAbilities) {
-                    sb.append("§cНет активных способностей\n");
-                }
-                
-                context.getSource().sendMessage(Text.literal(sb.toString()));
-                return Command.SINGLE_SUCCESS;
+                    
+                    if (!hasAbilities) {
+                        sb.append("§cНет активных способностей\n");
+                    }
+                    
+                    context.getSource().sendMessage(Text.literal(sb.toString()));
+                    return Command.SINGLE_SUCCESS;
                 })
             )
             
             .then(CommandManager.literal("reload")
-                .requires(source -> source.hasPermissionLevel(2))
                 .executes(context -> {
                     com.example.namescrambler.NameScramblerMod.ABILITY_CONFIG.load();
                     double currentChance = AbilitySystem.getArrowChance();
@@ -209,7 +206,6 @@ public class AbilityCommand {
             )
             
             .then(CommandManager.literal("save")
-                .requires(source -> source.hasPermissionLevel(2))
                 .executes(context -> {
                     AbilitySystem.saveData();
                     context.getSource().sendMessage(Text.literal("§aДанные способностей сохранены в файл"));
@@ -224,10 +220,8 @@ public class AbilityCommand {
                     context.getSource().sendMessage(Text.literal("§7• Каждая способность уникальна для одного игрока"));
                     context.getSource().sendMessage(Text.literal("§7• Стрела с шансом дает случайную свободную способность"));
                     context.getSource().sendMessage(Text.literal(""));
-                    context.getSource().sendMessage(Text.literal("§6=== Команды игрока ==="));
-                    context.getSource().sendMessage(Text.literal("§a/ability info §7- Информация о вашей способности"));
-                    context.getSource().sendMessage(Text.literal(""));
                     context.getSource().sendMessage(Text.literal("§6=== Команды оператора ==="));
+                    context.getSource().sendMessage(Text.literal("§a/ability info §7- Информация о вашей способности"));
                     context.getSource().sendMessage(Text.literal("§a/ability list §7- Все сохранённые способности"));
                     context.getSource().sendMessage(Text.literal("§a/ability give <игрок> <способность> §7- Выдать способность"));
                     context.getSource().sendMessage(Text.literal("§a/ability remove <игрок> §7- Удалить способность"));

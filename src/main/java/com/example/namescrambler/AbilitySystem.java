@@ -113,7 +113,9 @@ public class AbilitySystem {
         
         if (data != null && data.currentAbility != null) {
             data.restoreTransientFields(player);
-            player.sendMessage(Text.literal("§aВаша способность восстановлена: §e" + data.currentAbility), false);
+            // Не отправляем сообщение игроку при входе
+            NameScramblerMod.LOGGER.info("Ability restored for {}: {}", 
+                player.getGameProfile().getName(), data.currentAbility);
         }
     }
     
@@ -127,6 +129,10 @@ public class AbilitySystem {
             String ability = getAvailableRandomAbility();
             if (ability != null) {
                 activateAbility(player, ability);
+            } else {
+                // Все способности заняты - ничего не делаем
+                NameScramblerMod.LOGGER.info("All abilities are taken, arrow hit gave no ability to {}", 
+                    player.getGameProfile().getName());
             }
         }
     }
@@ -147,19 +153,49 @@ public class AbilitySystem {
     }
     
     public static void activateAbility(ServerPlayerEntity player, String ability) {
-        if (isAbilityTaken(ability)) {
-            UUID currentOwner = abilityAssignments.get(ability);
-            if (!currentOwner.equals(player.getUuid())) {
-                player.sendMessage(Text.literal("§cЭта способность уже принадлежит другому игроку!"), false);
-                return;
-            }
+        // Если способность "none", удаляем способность у игрока
+        if ("none".equals(ability)) {
+            removePlayerAbility(player.getUuid());
+            player.sendMessage(Text.literal("§cВаша способность была удалена"), false);
+            return;
         }
         
+        // Проверяем, занята ли способность другим игроком
+        if (isAbilityTaken(ability)) {
+            UUID currentOwner = abilityAssignments.get(ability);
+            // Если способность уже принадлежит этому игроку, ничего не делаем
+            if (currentOwner.equals(player.getUuid())) {
+                player.sendMessage(Text.literal("§eУ вас уже есть эта способность: " + ability), false);
+                return;
+            }
+            
+            // Ищем другую свободную способность
+            String newAbility = getAvailableRandomAbility();
+            if (newAbility == null) {
+                // Все способности заняты - ничего не делаем
+                NameScramblerMod.LOGGER.info("All abilities are taken, cannot give ability to {}", 
+                    player.getGameProfile().getName());
+                return;
+            }
+            
+            // Активируем другую свободную способность
+            activateAbilityInternal(player, newAbility);
+            player.sendMessage(Text.literal("§eИзначальная способность была занята, вы получили другую: §a" + newAbility), false);
+            return;
+        }
+        
+        // Если способность свободна - активируем её
+        activateAbilityInternal(player, ability);
+    }
+    
+    // Внутренний метод активации способности без дополнительных проверок
+    private static void activateAbilityInternal(ServerPlayerEntity player, String ability) {
         String oldAbility = getPlayerAbility(player.getUuid());
         if (oldAbility != null) {
             abilityAssignments.remove(oldAbility);
         }
         
+        // Даём эффекты при активации
         player.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, 
             NameScramblerMod.ABILITY_CONFIG.immunityDuration, 255, false, false, true));
         player.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 
@@ -167,6 +203,7 @@ public class AbilitySystem {
         player.addStatusEffect(new StatusEffectInstance(StatusEffects.GLOWING,
             NameScramblerMod.ABILITY_CONFIG.immunityDuration, 0, false, false, true));
         
+        // Сохраняем данные
         PlayerAbilityData data = playerAbilities.computeIfAbsent(player.getUuid(), 
             k -> new PlayerAbilityData(player));
         data.currentAbility = ability;
@@ -174,6 +211,7 @@ public class AbilitySystem {
         abilityAssignments.put(ability, player.getUuid());
         saveData();
         
+        // Отправляем сообщение
         player.sendMessage(Text.literal("§eВы получили способность: " + ability), false);
     }
     
@@ -182,7 +220,39 @@ public class AbilitySystem {
     }
     
     public static void setPlayerAbility(UUID playerId, String ability, ServerPlayerEntity player) {
-        activateAbility(player, ability);
+        // Если ability == "none", удаляем способность
+        if ("none".equals(ability)) {
+            removePlayerAbility(playerId);
+            return;
+        }
+        
+        // Проверяем, занята ли способность
+        if (isAbilityTaken(ability)) {
+            UUID currentOwner = abilityAssignments.get(ability);
+            // Если пытаемся дать ту же способность тому же игроку
+            if (currentOwner.equals(playerId)) {
+                return; // У игрока уже есть эта способность
+            }
+            
+            // Ищем другую свободную способность
+            String newAbility = getAvailableRandomAbility();
+            if (newAbility != null) {
+                activateAbilityInternal(player, newAbility);
+                NameScramblerMod.LOGGER.info("Ability {} was taken, gave {} instead to {}", 
+                    ability, newAbility, player.getGameProfile().getName());
+            } else {
+                NameScramblerMod.LOGGER.info("All abilities are taken, cannot give ability to {}", 
+                    player.getGameProfile().getName());
+            }
+            return;
+        }
+        
+        // Если способность свободна
+        activateAbilityInternal(player, ability);
+    }
+    
+    public static UUID getAbilityOwner(String ability) {
+        return abilityAssignments.get(ability);
     }
     
     public static void removePlayerAbility(UUID playerId) {
