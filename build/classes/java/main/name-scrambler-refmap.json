@@ -11,6 +11,9 @@
       "getDisplayName": "Lnet/minecraft/class_1657;method_5476()Lnet/minecraft/class_2561;",
       "getEntityName": "Lnet/minecraft/class_1657;method_5820()Ljava/lang/String;"
     },
+    "com/example/namescrambler/mixin/PlayerEntityMixin_WhiteAlbum": {
+      "attack": "Lnet/minecraft/class_1657;method_7324(Lnet/minecraft/class_1297;)V"
+    },
     "com/example/namescrambler/mixin/ServerPlayNetworkHandlerMixin": {
       "handleDecoratedMessage": "Lnet/minecraft/class_3244;method_44155(Lnet/minecraft/class_7471;)V"
     },
@@ -33,6 +36,9 @@
       "com/example/namescrambler/mixin/PlayerEntityMixin": {
         "getDisplayName": "Lnet/minecraft/class_1657;method_5476()Lnet/minecraft/class_2561;",
         "getEntityName": "Lnet/minecraft/class_1657;method_5820()Ljava/lang/String;"
+      },
+      "com/example/namescrambler/mixin/PlayerEntityMixin_WhiteAlbum": {
+        "attack": "Lnet/minecraft/class_1657;method_7324(Lnet/minecraft/class_1297;)V"
       },
       "com/example/namescrambler/mixin/ServerPlayNetworkHandlerMixin": {
         "handleDecoratedMessage": "Lnet/minecraft/class_3244;method_44155(Lnet/minecraft/class_7471;)V"

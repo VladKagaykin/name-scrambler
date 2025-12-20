@@ -9,7 +9,8 @@
     "ServerPlayerEntityMixin",
     "ServerPlayNetworkHandlerMixin",
     "ArrowEntityMixin",
-    "ServerPlayerEntityMixin_Abilities"
+    "ServerPlayerEntityMixin_Abilities",
+    "PlayerEntityMixin_WhiteAlbum"
   ],
   "injectors": {
     "defaultRequire": 1

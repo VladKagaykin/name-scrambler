@@ -30,6 +30,7 @@ public class NameScramblerMod implements ModInitializer {
         ServerLifecycleEvents.SERVER_STARTING.register(server -> {
             CONFIG.load();
             ABILITY_CONFIG.load();
+            AbilitySystem.init(); // Инициализируем систему способностей
             LOGGER.info("Proximity chat radius: {} blocks", CONFIG.chatRadius);
             LOGGER.info("Arrow activation chance: {}%", ABILITY_CONFIG.arrowActivationChance * 100);
         });
@@ -48,10 +49,14 @@ public class NameScramblerMod implements ModInitializer {
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             ServerPlayerEntity player = handler.getPlayer();
             setupPlayer(player);
+            AbilitySystem.onPlayerJoin(player); // Восстанавливаем способность
         });
         
-        // Инициализируем систему способностей
-        AbilitySystem.init();
+        // Добавляем обработчик выхода игрока
+        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
+            ServerPlayerEntity player = handler.getPlayer();
+            AbilitySystem.onPlayerLeave(player); // Сохраняем данные
+        });
     }
 
     private void onServerStarted(MinecraftServer server) {

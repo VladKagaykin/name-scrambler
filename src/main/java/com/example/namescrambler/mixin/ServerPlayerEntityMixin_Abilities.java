@@ -23,6 +23,10 @@ public class ServerPlayerEntityMixin_Abilities {
                 case "20centuryboy":
                     AbilitySystem.update20CenturyBoyAbility(player);
                     break;
+                case "whitealbum":
+                    AbilitySystem.updateWhiteAlbumAbility(player);
+                    break;
+                // heyya больше нет
             }
         }
     }

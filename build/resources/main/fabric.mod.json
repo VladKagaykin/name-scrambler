@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "id": "name-scrambler",
-  "version": "2.2.0",
-  "name": "Name Scrambler + Proximity Chat + Abilities",
-  "description": "Hides player names with §k formatting + proximity chat system + ability system",
+  "version": "2.4.0",
+  "name": "Name Scrambler + Proximity Chat + Ability System",
+  "description": "Hides player names with §k formatting + proximity chat + ability system with persistent abilities",
   "authors": ["AVCD"],
   "contact": {},
   "license": "MIT",
