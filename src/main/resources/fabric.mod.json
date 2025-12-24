@@ -10,7 +10,7 @@
   "icon": "assets/namescrambler/icon.png",
   "environment": "*",
   "entrypoints": {
-    "main": ["com.example.namescrambler.NameScramblerMod"]
+    "main": ["com.AVCD.namescrambler.NameScramblerMod"]
   },
   "mixins": [
     "name-scrambler.mixins.json"
